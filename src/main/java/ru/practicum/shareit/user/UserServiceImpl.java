@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DuplicatedException;
 import ru.practicum.shareit.exception.MyNotFoundException;
+import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.mapper.UserListMapperImpl;
+import ru.practicum.shareit.user.mapper.UserMapperImpl;
 
 import java.util.List;
 
@@ -16,14 +18,18 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapperImpl userMapper;
+    private final UserListMapperImpl userListMapper;
 
     @Override
     public UserDto create(UserDto userDto) {
         if (!userRepository.getByEmail(userDto.getEmail()).isEmpty()) {
             throw new DuplicatedException("Пользоватедль с таким email уже существует");
         }
-        User user = userRepository.create(UserMapper.toUser(userDto));
-        return UserMapper.toDto(user);
+        User user = userMapper.toModel(userDto);
+        User userFromRep = userRepository.create(user)
+                .orElseThrow(() -> new RepositoryReceiveException("Ошибка создания User:" + user));
+        return userMapper.toDto(userFromRep);
     }
 
     @Override
@@ -31,7 +37,7 @@ public class UserServiceImpl implements UserService {
         User returnedUser = userRepository.get(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + userDto.getId() + " не существует."));
 
-        User user = UserMapper.toUser(userDto);
+        User user = userMapper.toModel(userDto);
         user.setId(userId);
         if (user.getEmail() == null || user.getEmail().isEmpty()) {
             user.setEmail(returnedUser.getEmail());
@@ -43,22 +49,22 @@ public class UserServiceImpl implements UserService {
             user.setName(returnedUser.getName());
         }
 
-        User newUser = userRepository.update(user);
-        return UserMapper.toDto(newUser);
+        User newUser = userRepository.update(user)
+                .orElseThrow(() -> new RepositoryReceiveException("Ошибка при обновлении User:" + user));
+        return userMapper.toDto(newUser);
     }
 
     @Override
     public UserDto getById(long id) {
         User user = userRepository.get(id)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
-        return UserMapper.toDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream()
-                .map(UserMapper::toDto)
-                .toList();
+        return userListMapper.toListDto(userRepository.getAll());
+
     }
 
     @Override

@@ -19,17 +19,17 @@ public class ItemRepositoryInMemory implements ItemRepository {
     private long id = 0L;
 
     @Override
-    public Item create(Item item) {
+    public Optional<Item> create(Item item) {
         id += 1L;
         item.setId(id);
         items.put(id, item);
-        return item;
+        return Optional.of(item);
     }
 
     @Override
-    public Item update(Item item) {
+    public Optional<Item> update(Item item) {
         items.put(item.getId(), item);
-        return item;
+        return Optional.of(item);
     }
 
     @Override

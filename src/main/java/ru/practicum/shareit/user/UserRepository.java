@@ -5,9 +5,9 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    User create(User user);
+    Optional<User> create(User user);
 
-    User update(User newUser);
+    Optional<User> update(User newUser);
 
     List<User> getAll();
 

@@ -9,15 +9,16 @@ import java.time.LocalDate;
  * Created Shchetinin Alexander
  */
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Booking {
 
-    Item bookingItem;
-    LocalDate startBooking;
-    LocalDate finishBooking;
-    BookingStatus status;
+    private Item bookingItem;
+    private LocalDate startBooking;
+    private LocalDate finishBooking;
+    private BookingStatus status;
 
 }

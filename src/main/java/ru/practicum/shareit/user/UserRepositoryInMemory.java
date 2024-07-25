@@ -17,17 +17,17 @@ public class UserRepositoryInMemory implements UserRepository {
     private long id = 0L;
 
     @Override
-    public User create(User user) {
+    public Optional<User> create(User user) {
         id += 1L;
         user.setId(id);
         users.put(id, user);
-        return user;
+        return Optional.of(user);
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         users.put(user.getId(), user);
-        return user;
+        return Optional.of(user);
     }
 
     @Override

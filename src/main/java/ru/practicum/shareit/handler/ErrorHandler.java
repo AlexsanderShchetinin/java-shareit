@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.DuplicatedException;
 import ru.practicum.shareit.exception.InterruptionRuleException;
 import ru.practicum.shareit.exception.MyNotFoundException;
+import ru.practicum.shareit.exception.RepositoryReceiveException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -22,6 +23,13 @@ public class ErrorHandler {
     @ExceptionHandler
     public ErrorResponse notFound(MyNotFoundException e) {
         log.debug("Not found: {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler
+    public ErrorResponse notFound(RepositoryReceiveException e) {
+        log.debug("RepositoryReceiveException: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.InterruptionRuleException;
 import ru.practicum.shareit.exception.MyNotFoundException;
+import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemListMapperImpl;
+import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -19,6 +21,8 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemMapperImpl itemMapper;
+    private final ItemListMapperImpl itemListMapper;
 
 
     @Override
@@ -27,9 +31,11 @@ public class ItemServiceImpl implements ItemService {
         userRepository.get(ownerId)
                 .orElseThrow(
                         () -> new MyNotFoundException("Владелец с id=" + ownerId + " не зарегистрирован в приложении"));
-        Item item = ItemMapper.toCreatedItem(itemDto);
+        Item item = itemMapper.toModel(itemDto);
         item.setOwner(ownerId);
-        return ItemMapper.toDto(itemRepository.create(item));
+        Item itemFromRep = itemRepository.create(item)
+                .orElseThrow(() -> new RepositoryReceiveException("ошибка создания Item:" + item));
+        return itemMapper.toDto(itemFromRep);
     }
 
     @Override
@@ -58,10 +64,11 @@ public class ItemServiceImpl implements ItemService {
             itemDto.setAvailable(returnedItem.isAvailable());
         }
 
-        Item item = ItemMapper.toUpdatedItem(itemDto);
+        Item item = itemMapper.toModel(itemDto);
         item.setOwner(ownerId);
-        Item updatedItem = itemRepository.update(item);
-        return ItemMapper.toDto(updatedItem);
+        Item updatedItem = itemRepository.update(item)
+                .orElseThrow(() -> new RepositoryReceiveException("Ошибка обновления Item:" + item));
+        return itemMapper.toDto(updatedItem);
     }
 
     @Override
@@ -74,21 +81,17 @@ public class ItemServiceImpl implements ItemService {
         Item returnedItem = itemRepository.get(itemId)
                 .orElseThrow(() -> new MyNotFoundException("Вещи с id=" + itemId + " не существует."));
 
-        return ItemMapper.toDto(returnedItem);
+        return itemMapper.toDto(returnedItem);
     }
 
     @Override
     public List<ItemDto> getAllByOwner(String owner) {
         long ownerId = Long.parseLong(owner);
-        return itemRepository.getAllByOwner(ownerId).stream()
-                .map(ItemMapper::toDto)
-                .toList();
+        return itemListMapper.toListDto(itemRepository.getAllByOwner(ownerId));
     }
 
     @Override
     public List<ItemDto> getSelection(String searchText) {
-        return itemRepository.getSelection(searchText).stream()
-                .map(ItemMapper::toDto)
-                .toList();
+        return itemListMapper.toListDto(itemRepository.getSelection(searchText));
     }
 }

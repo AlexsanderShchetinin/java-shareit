@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ItemRepository {
 
-    Item create(Item item);
+    Optional<Item> create(Item item);
 
-    Item update(Item item);
+    Optional<Item> update(Item item);
 
     List<Item> getAllByOwner(long ownerId);
 
