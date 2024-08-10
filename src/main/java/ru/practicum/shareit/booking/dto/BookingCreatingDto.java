@@ -7,9 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
@@ -20,9 +17,10 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @ToString
-public class BookingDto {
+public class BookingCreatingDto {
 
-    private Long id;
+    @NotNull(message = "В бронировании поле с идентификатором itemId не может быть пустым.")
+    private Long itemId;
 
     @FutureOrPresent(message = "Дата начала бронирования не может быть в прошлом.")
     @NotNull(message = "В бронировании поле с датой начала не может быть пустым.")
@@ -32,7 +30,4 @@ public class BookingDto {
     @NotNull(message = "В бронировании поле с датой окончания не может быть пустым.")
     private LocalDateTime end;
 
-    private Item item;
-    private User booker;
-    private BookingStatus status;
 }

@@ -25,37 +25,37 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getAll() {
-        log.info("==> GET /all users <==");
+        log.info("{}[34m==> GET /all users <==", (char) 27);
         return ResponseEntity.ok().body(userService.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
-        log.info("==> GET /user by id={} <==", id);
+        log.info("{}[34m==> GET /user by id={} <==", (char) 27, id);
         return ResponseEntity.ok().body(userService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody @Validated(Marker.Create.class) UserDto user) {
-        log.info("Create User: {} - STARTED", user.getName());
+        log.info("{}[34mCreate User: {} - STARTED", (char) 27, user.getName());
         UserDto createdUser = userService.create(user);
-        log.info("User {} with id={} - CREATED", createdUser.getName(), createdUser.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        log.info("{}[34mUser {} with id={} - CREATED", (char) 27, createdUser.getName(), createdUser.getId());
+        return ResponseEntity.ok().body(createdUser);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
-                          @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
-        log.info("==> PATCH / Update User: {} - STARTED <==", newUser.getName());
+                                          @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
+        log.info("{}[34m==> PATCH / Update User: {} - STARTED <==", (char) 27, newUser.getName());
         UserDto updatedUser = userService.update(userId, newUser);
-        log.info("==> User {}  with id={} UPDATED <==", newUser.getName(), newUser.getId());
+        log.info("{}[34m==> User {}  with id={} UPDATED <==", (char) 27, newUser.getName(), newUser.getId());
         return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
-        log.info("==> DELETE / User with id={} <==", id);
+        log.info("{}[34m==> DELETE / User with id={} <==", (char) 27, id);
         userService.delete(id);
     }
 

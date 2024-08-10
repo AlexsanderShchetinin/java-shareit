@@ -3,9 +3,10 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicatedException;
 import ru.practicum.shareit.exception.MyNotFoundException;
-import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserListMapperImpl;
 import ru.practicum.shareit.user.mapper.UserMapperImpl;
@@ -15,6 +16,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -22,19 +24,20 @@ public class UserServiceImpl implements UserService {
     private final UserListMapperImpl userListMapper;
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserDto create(UserDto userDto) {
         if (!userRepository.getByEmail(userDto.getEmail()).isEmpty()) {
             throw new DuplicatedException("Пользоватедль с таким email уже существует");
         }
         User user = userMapper.toModel(userDto);
-        User userFromRep = userRepository.create(user)
-                .orElseThrow(() -> new RepositoryReceiveException("Ошибка создания User:" + user));
+        User userFromRep = userRepository.save(user);
         return userMapper.toDto(userFromRep);
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserDto update(long userId, UserDto userDto) {
-        User returnedUser = userRepository.get(userId)
+        User returnedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + userDto.getId() + " не существует."));
 
         User user = userMapper.toModel(userDto);
@@ -49,28 +52,27 @@ public class UserServiceImpl implements UserService {
             user.setName(returnedUser.getName());
         }
 
-        User newUser = userRepository.update(user)
-                .orElseThrow(() -> new RepositoryReceiveException("Ошибка при обновлении User:" + user));
+        User newUser = userRepository.save(user);
         return userMapper.toDto(newUser);
     }
 
     @Override
     public UserDto getById(long id) {
-        User user = userRepository.get(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
         return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userListMapper.toListDto(userRepository.getAll());
+        return userListMapper.toListDto(userRepository.findAll());
 
     }
 
     @Override
     public void delete(long id) {
-        userRepository.get(id)
+        userRepository.findById(id)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 }
