@@ -139,7 +139,7 @@ public class ItemServiceImpl implements ItemService {
         // проверяем каждый комментарий, относится ли он к вещи, если да, то заполняем лист comments
         List<CommentDto> comments = new ArrayList<>();
         for (CommentDto comment : allComments) {
-            if (item.getId() == comment.getItem().getId()) {
+            if (item.getId().equals(comment.getItem().getId())) {
                 comments.add(comment);
             }
         }
