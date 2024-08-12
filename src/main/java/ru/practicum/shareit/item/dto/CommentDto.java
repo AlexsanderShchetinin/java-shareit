@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +19,7 @@ public class CommentDto {
 
     private Long id;
     private String text;
-    private Item item;
+    private ItemDto item;
     private String authorName;
     private LocalDateTime created;
 
