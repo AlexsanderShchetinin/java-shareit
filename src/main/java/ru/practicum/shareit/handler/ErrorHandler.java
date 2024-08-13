@@ -19,56 +19,56 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ErrorResponse notFound(MyNotFoundException e) {
-        log.debug("{}[33mNot found: {}", (char) 27, e.getMessage());
+        log.debug("Not found: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ErrorResponse notFound(RepositoryReceiveException e) {
-        log.debug("{}[33mRepositoryReceiveException: {}", (char) 27, e.getMessage());
+        log.debug("RepositoryReceiveException: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
     public ErrorResponse duplicated(DuplicatedException e) {
-        log.debug("{}[33mDuplicated: {}", (char) 27, e.getMessage());
+        log.debug("Duplicated: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler
     public ErrorResponse interrupted(InterruptionRuleException e) {
-        log.debug("{}[33mInterruption Rule exception: {}", (char) 27, e.getMessage());
+        log.debug("Interruption Rule exception: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse wrongRequested(final BadRequestException e) {
-        log.debug("{}[33mBad request: {}", (char) 27, e.getMessage());
+        log.debug("Bad request: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalid(final MethodArgumentNotValidException e) {
-        log.debug("{}[33mInvalid data: {}", (char) 27, e.getMessage());
+        log.debug("Invalid data: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalid(final MissingRequestHeaderException e) {
-        log.debug("{}[33mMissing Request Header: {}", (char) 27, e.getMessage());
+        log.debug("Missing Request Header: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Exception e) {
-        log.warn("{}[31mError", (char) 27, e);
+        log.warn("Error", e);
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

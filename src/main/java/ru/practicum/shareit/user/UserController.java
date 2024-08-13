@@ -25,13 +25,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getAll() {
-        log.info("{}[34m==> GET /all users <==", (char) 27);
+        log.info("==> GET /all users <==");
         return ResponseEntity.ok().body(userService.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
-        log.info("{}[34m==> GET /user by id={} <==", (char) 27, id);
+        log.info("==> GET /user by id={} <==", id);
         return ResponseEntity.ok().body(userService.getById(id));
     }
 
@@ -46,16 +46,16 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
                                           @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
-        log.info("{}[34m==> PATCH / Update User: {} - STARTED <==", (char) 27, newUser.getName());
+        log.info("==> PATCH / Update User: {} - STARTED <==", newUser.getName());
         UserDto updatedUser = userService.update(userId, newUser);
-        log.info("{}[34m==> User {}  with id={} UPDATED <==", (char) 27, newUser.getName(), newUser.getId());
+        log.info("==> User {}  with id={} UPDATED <==", newUser.getName(), newUser.getId());
         return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
-        log.info("{}[34m==> DELETE / User with id={} <==", (char) 27, id);
+        log.info("==> DELETE / User with id={} <==", id);
         userService.delete(id);
     }
 
