@@ -37,9 +37,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody @Validated(Marker.Create.class) UserDto user) {
-        log.info("{}[34mCreate User: {} - STARTED", (char) 27, user.getName());
+        log.info("Create User: {} - STARTED", user.getName());
         UserDto createdUser = userService.create(user);
-        log.info("{}[34mUser {} with id={} - CREATED", (char) 27, createdUser.getName(), createdUser.getId());
+        log.info("User {} with id={} - CREATED", createdUser.getName(), createdUser.getId());
         return ResponseEntity.ok().body(createdUser);
     }
 
