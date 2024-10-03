@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created Shchetinin Alexander 24.07.2024
+ * Created by Shchetinin Alexander 24.07.2024
  */
 @Slf4j
 @RestController

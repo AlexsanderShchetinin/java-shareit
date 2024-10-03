@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 /**
- * Created Shchetinin Alexander
+ * Created by Shchetinin Alexander
  */
 
 @Builder
