@@ -7,10 +7,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.DuplicatedException;
-import ru.practicum.shareit.exception.InterruptionRuleException;
-import ru.practicum.shareit.exception.MyNotFoundException;
-import ru.practicum.shareit.exception.RepositoryReceiveException;
+import ru.practicum.shareit.exception.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,6 +41,13 @@ public class ErrorHandler {
     @ExceptionHandler
     public ErrorResponse interrupted(InterruptionRuleException e) {
         log.debug("Interruption Rule exception: {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse wrongRequested(final BadRequestException e) {
+        log.debug("Bad request: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

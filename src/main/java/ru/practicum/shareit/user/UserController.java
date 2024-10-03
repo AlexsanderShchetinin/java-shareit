@@ -40,12 +40,12 @@ public class UserController {
         log.info("Create User: {} - STARTED", user.getName());
         UserDto createdUser = userService.create(user);
         log.info("User {} with id={} - CREATED", createdUser.getName(), createdUser.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return ResponseEntity.ok().body(createdUser);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
-                          @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
+                                          @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
         log.info("==> PATCH / Update User: {} - STARTED <==", newUser.getName());
         UserDto updatedUser = userService.update(userId, newUser);
         log.info("==> User {}  with id={} UPDATED <==", newUser.getName(), newUser.getId());
