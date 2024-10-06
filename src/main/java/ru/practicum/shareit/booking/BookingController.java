@@ -29,9 +29,9 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<BookingDto> addBooking(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                  @RequestBody @Validated BookingCreatingDto booking) {
-        log.info("==> POST/bookings <== TRY TO ADD NEW BOOKING {}", booking);
+        log.info("{}[32m ==> POST/bookings <== TRY TO ADD NEW BOOKING {}{}[37m",(char) 27, booking,(char) 27);
         BookingDto returnedBooking = service.create(ownerId, booking);
-        log.info("==> POST/bookings <== ADD NEW BOOKING {} COMPLETE ", returnedBooking);
+        log.info("{}[32m ==> POST/bookings <== ADD NEW BOOKING {} COMPLETE {}[37m", (char) 27, returnedBooking, (char) 27);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedBooking);
     }
 
@@ -40,7 +40,7 @@ public class BookingController {
     public ResponseEntity<BookingDto> changeStatus(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                    @PathVariable long bookingId,
                                                    @RequestParam(defaultValue = "unknown") String approved) {
-        log.info("==> PATCH bookings/{}?approved={} <== START REQUEST", bookingId, approved);
+        log.info("{}[32m ==> PATCH bookings/{}?approved={} <== START REQUEST{}[37m", (char) 27, bookingId, approved, (char) 27);
         if (!approved.equalsIgnoreCase("true") && !approved.equalsIgnoreCase("false")) {
             throw new InterruptionRuleException("Некорректно указан параметр approved в URL запроса");
         }
@@ -49,7 +49,7 @@ public class BookingController {
                 .approve(Boolean.parseBoolean(approved))
                 .build();
         BookingDto returnedBooking = service.changeStatus(ownerId, bookingStatusDto);
-        log.info("==> PATCH bookings/{}?approved={} <== FINISH REQUEST", bookingId, approved);
+        log.info("{}[32m ==> PATCH bookings/{}?approved={} <== FINISH REQUEST{}[37m", (char) 27, bookingId, approved, (char) 27);
         return ResponseEntity.ok().body(returnedBooking);
     }
 
@@ -57,7 +57,7 @@ public class BookingController {
     @GetMapping("{bookingId}")
     public ResponseEntity<BookingDto> getById(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                               @PathVariable long bookingId) {
-        log.info("==> GET bookings/{} <==", bookingId);
+        log.info("{}[32m ==> GET bookings/{} <=={}[37m", (char) 27, bookingId, (char) 27);
         return ResponseEntity.ok().body(service.getById(ownerId, bookingId));
     }
 
@@ -65,7 +65,7 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<List<BookingDto>> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") String bookerStr,
                                                               @RequestParam(defaultValue = "ALL") String state) {
-        log.info("==> GET bookings?state={} <==", state);
+        log.info("{}[32m ==> GET bookings?state={} <=={}[37m", (char) 27, state, (char) 27);
         return ResponseEntity.ok().body(service.getBookingsByBooker(bookerStr, state));
     }
 
@@ -73,7 +73,7 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                                @RequestParam(defaultValue = "ALL") String state) {
-        log.info("==> GET bookings/owner?state={} <==", state);
+        log.info("{}[32m ==> GET bookings/owner?state={} <=={}[37m", (char) 27, state, (char) 27);
         return ResponseEntity.ok().body(service.getBookingsByOwner(ownerId, state));
     }
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.request.resp.ItemResponse;
 import ru.practicum.shareit.validator.Marker;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class ItemRequestDto {
 
     @NotBlank(message = "Запрос не может быть пустым")
     private String description;
-
-    private List<ItemResponse> responses;
     private LocalDateTime created;
+    private List<ItemResponseDto> items;
+
 }

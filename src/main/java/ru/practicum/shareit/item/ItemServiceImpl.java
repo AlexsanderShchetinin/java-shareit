@@ -18,6 +18,8 @@ import ru.practicum.shareit.item.mapper.ItemListMapperImpl;
 import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.resp.ItemResponse;
+import ru.practicum.shareit.request.resp.ItemResponseRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -38,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemResponseRepository responseRepository;
 
     private final ItemMapperImpl itemMapper;
     private final ItemListMapperImpl itemListMapper;
@@ -51,8 +54,21 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(
                         () -> new MyNotFoundException("Владелец с id=" + ownerId + " не зарегистрирован в приложении"));
         Item item = itemMapper.toModel(itemDto);
+
+        if(itemDto.getRequestId() == null){
+            item.setRequest(null);
+        }else {
+            ItemResponse response = ItemResponse.builder()
+                    .request(item.getRequest())
+                    .item(item)
+                    .textResponse("here will be response comment")
+                    .build();
+            responseRepository.save(response);
+        }
+
         item.setOwner(owner);
         Item itemFromRep = itemRepository.save(item);
+
         return itemMapper.toDto(itemFromRep);
     }
 

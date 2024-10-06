@@ -25,37 +25,39 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getAll() {
-        log.info("==> GET /all users <==");
+        log.info("{}[32m ==> GET /all users <=={}[37m", (char) 27, (char) 27);
         return ResponseEntity.ok().body(userService.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
-        log.info("==> GET /user by id={} <==", id);
+        log.info("{}[32m ==> GET /user by id={} <=={}[37m", (char) 27, id, (char) 27);
         return ResponseEntity.ok().body(userService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody @Validated(Marker.Create.class) UserDto user) {
-        log.info("Create User: {} - STARTED", user.getName());
+        log.info("{}[32m Create User: {} - STARTED{}[37m", (char) 27, user.getName(), (char) 27);
         UserDto createdUser = userService.create(user);
-        log.info("User {} with id={} - CREATED", createdUser.getName(), createdUser.getId());
+        log.info("{}[32m User {} with id={} - CREATED{}[37m",
+                (char) 27, createdUser.getName(), createdUser.getId(), (char) 27);
         return ResponseEntity.ok().body(createdUser);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
                                           @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
-        log.info("==> PATCH / Update User: {} - STARTED <==", newUser.getName());
+        log.info("{}[32m ==> PATCH / Update User: {} - STARTED <=={}[37m", (char) 27, newUser.getName(), (char) 27);
         UserDto updatedUser = userService.update(userId, newUser);
-        log.info("==> User {}  with id={} UPDATED <==", newUser.getName(), newUser.getId());
+        log.info("{}[32m ==> User {}  with id={} UPDATED <=={}[37m",
+                (char) 27,newUser.getName(), newUser.getId(), (char) 27);
         return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
-        log.info("==> DELETE / User with id={} <==", id);
+        log.info("{}[32m ==> DELETE / User with id={} <=={}[37m",(char) 27, id, (char) 27);
         userService.delete(id);
     }
 

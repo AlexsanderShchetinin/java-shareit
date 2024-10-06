@@ -30,4 +30,6 @@ public class ItemDto {
     @NotNull(groups = Marker.Create.class)
     private Boolean available;
 
+    private Long requestId;  // поле заполняется, если Item создан в ответ на запрос (ItemRequest)
+
 }
