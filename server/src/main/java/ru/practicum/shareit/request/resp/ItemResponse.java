@@ -12,7 +12,7 @@ import ru.practicum.shareit.request.ItemRequest;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "item_responses")
-public class ItemResponse{
+public class ItemResponse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
