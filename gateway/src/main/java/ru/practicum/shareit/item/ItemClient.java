@@ -28,28 +28,28 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> add(long userId, ItemDto itemDto){
+    public ResponseEntity<Object> add(long userId, ItemDto itemDto) {
         return post("", userId, itemDto);
     }
 
-    public ResponseEntity<Object> getAllByOwner(long ownerId){
+    public ResponseEntity<Object> getAllByOwner(long ownerId) {
         return get("", ownerId);
     }
 
-    public ResponseEntity<Object> getById(long ownerId, long id){
+    public ResponseEntity<Object> getById(long ownerId, long id) {
         return get("/" + id, ownerId);
     }
 
-    public ResponseEntity<Object> getSelection(long userId, String text){
+    public ResponseEntity<Object> getSelection(long userId, String text) {
         Map<String, Object> params = Map.of("text", text);
         return get("/search?text={text}", userId, params);
     }
 
-    public ResponseEntity<Object> update(long ownerId, ItemDto itemDto){
+    public ResponseEntity<Object> update(long ownerId, ItemDto itemDto) {
         return patch("/" + itemDto.getId(), ownerId);
     }
 
-    public ResponseEntity<Object> addComment(CommentCreationDto comment){
+    public ResponseEntity<Object> addComment(CommentCreationDto comment) {
         return post("/" + comment.getAuthorId() + "/comment", comment);
     }
 

@@ -98,7 +98,7 @@ public class BookingController {
         log.info("{}[32m ==> GET bookings/owner?state={} <=={}[37m", (char) 27, stateParam, (char) 27);
         StateStatusReq state = StateStatusReq.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        return  bookingClient.getBookingsByOwner(ownerId, state, from, size);
+        return bookingClient.getBookingsByOwner(ownerId, state, from, size);
     }
 
     // Получение списка всех бронирований текущего пользователя

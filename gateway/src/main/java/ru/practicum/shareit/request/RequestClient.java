@@ -26,19 +26,19 @@ public class RequestClient extends BaseClient {
     }
 
 
-    public ResponseEntity<Object> add(long userId, ItemRequestDto itemRequestDto){
+    public ResponseEntity<Object> add(long userId, ItemRequestDto itemRequestDto) {
         return post("", userId, itemRequestDto);
     }
 
-    public ResponseEntity<Object> getOwnRequests(long userId){
+    public ResponseEntity<Object> getOwnRequests(long userId) {
         return get("", userId);
     }
 
-    public ResponseEntity<Object> getAllRequests(long userId){
+    public ResponseEntity<Object> getAllRequests(long userId) {
         return get("/all", userId);
     }
 
-    public ResponseEntity<Object> getRequest(long userId, long reqId){
+    public ResponseEntity<Object> getRequest(long userId, long reqId) {
         return get("/" + reqId, userId);
     }
 

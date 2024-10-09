@@ -42,15 +42,15 @@ public class BookingClient extends BaseClient {
         return get("/" + bookingId, userId);
     }
 
-    public ResponseEntity<Object> create(Long ownerId, BookingCreatingDto bookingCreatingDto){
+    public ResponseEntity<Object> create(Long ownerId, BookingCreatingDto bookingCreatingDto) {
         return post("", ownerId, bookingCreatingDto);
     }
 
-    public ResponseEntity<Object> changeStatus(Long ownerId, BookingStatusDto bookingStatusDto){
+    public ResponseEntity<Object> changeStatus(Long ownerId, BookingStatusDto bookingStatusDto) {
         return patch("/" + bookingStatusDto.getId(), ownerId, bookingStatusDto);
     }
 
-    public ResponseEntity<Object> getBookingsByOwner(Long userId, StateStatusReq state, Integer from, Integer size){
+    public ResponseEntity<Object> getBookingsByOwner(Long userId, StateStatusReq state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,
