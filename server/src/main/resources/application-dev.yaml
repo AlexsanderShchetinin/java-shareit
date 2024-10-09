@@ -1,8 +1,10 @@
+server.port: 9090
+
 spring:
   output.ansi.enabled: ALWAYS # цвет в логах должен быть виден всегда
   main:
     log-startup-info: true # выводим служебную информацию
-    banner-mode: off       # не выводим баннер
+
 
   application.name: shareit
 

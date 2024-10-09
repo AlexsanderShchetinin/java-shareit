@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserDto create(UserDto userDto) {
         if (!userRepository.getByEmail(userDto.getEmail()).isEmpty()) {
-            throw new DuplicatedException("Пользоватедль с таким email уже существует");
+            throw new DuplicatedException("Пользователь с таким email уже существует");
         }
         User user = userMapper.toModel(userDto);
         User userFromRep = userRepository.save(user);
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(returnedUser.getEmail());
         } else if (!userRepository.getByEmail(user.getEmail()).isEmpty() &&
                 !user.getEmail().equals(returnedUser.getEmail())) {
-            throw new DuplicatedException("Пользоватедль с таким email уже существует");
+            throw new DuplicatedException("Пользователь с таким email уже существует");
         }
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(returnedUser.getName());

@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validator.Marker;
 
 import java.util.Collection;
 
@@ -35,13 +33,18 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody UserDto user) {
-        return ResponseEntity.ok().body(userService.create(user));
+        UserDto userDto = userService.create(user);
+        log.info("{}[32m User: {} - CREATED <== {}[37m", (char) 27, userDto.toString(), (char) 27);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
                                           @RequestBody UserDto newUser) {
-        return ResponseEntity.ok().body(userService.update(userId, newUser));
+        UserDto userDto = userService.update(userId, newUser);
+        log.info("{}[32m ==> User {}  with id={} UPDATED <=={}[37m",
+                (char) 27,newUser.getName(), newUser.getId(), (char) 27);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @DeleteMapping("/{id}")

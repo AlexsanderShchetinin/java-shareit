@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -31,16 +30,12 @@ public class BookingController {
         log.info("{}[32m ==> POST/bookings <== TRY TO ADD NEW BOOKING {}{}[37m", (char) 27, booking, (char) 27);
         try {
             long ownerId = Long.parseLong(ownerStr);
-            ResponseEntity<Object> resp = bookingClient.create(ownerId, booking);
-            log.info("{}[32m ==> POST/bookings <== ADD NEW BOOKING {} COMPLETE {}[37m",
-                    (char) 27, resp.getBody(), (char) 27);
-            return ResponseEntity.status(HttpStatus.CREATED).body(resp.getBody());
+            return bookingClient.create(ownerId, booking);
         } catch (NumberFormatException e) {
             log.warn("{}[31m ==> POST/bookings catch except: {} {}[37m",
                     (char) 27, e.getMessage() + e.getCause(), (char) 27);
             throw new BadRequestException("ошибка преобразования Id владельца:" + e.getMessage());
         }
-
     }
 
     // Изменение статуса по бронированию. Изменять статус может только владелец вещи
@@ -50,7 +45,6 @@ public class BookingController {
                                                @RequestParam(defaultValue = "unknown") String approved) {
         log.info("{}[32m ==> PATCH bookings/{}?approved={} <== START REQUEST{}[37m",
                 (char) 27, bookingId, approved, (char) 27);
-
         long ownerId;
         try {
             ownerId = Long.parseLong(ownerStr);
@@ -67,16 +61,13 @@ public class BookingController {
                 .id(bookingId)
                 .approve(Boolean.parseBoolean(approved))
                 .build();
-        ResponseEntity<Object> resp = bookingClient.changeStatus(ownerId, bookingStatusDto);
-        log.info("{}[32m ==> PATCH bookings/{}?approved={} <== FINISH REQUEST{}[37m", (char) 27, bookingId, approved, (char) 27);
-        return ResponseEntity.ok().body(resp.getBody());
+        return bookingClient.changeStatus(ownerId, bookingStatusDto);
     }
 
     // получение бронирования по id
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") String ownerStr,
                                           @PathVariable long bookingId) {
-
         long ownerId;
         try {
             ownerId = Long.parseLong(ownerStr);
@@ -85,9 +76,8 @@ public class BookingController {
                     (char) 27, e.getMessage() + e.getCause(), (char) 27);
             throw new BadRequestException("ошибка преобразования Id владельца:" + e.getMessage());
         }
-
         log.info("{}[32m ==> GET bookings/{} <=={}[37m", (char) 27, bookingId, (char) 27);
-        return ResponseEntity.ok().body(bookingClient.getById(ownerId, bookingId).getBody());
+        return bookingClient.getById(ownerId, bookingId);
     }
 
     // Получение списка бронирований для всех вещей текущего пользователя. Для владельца хотя бы одной вещи
@@ -105,11 +95,10 @@ public class BookingController {
                     (char) 27, e.getMessage() + e.getCause(), (char) 27);
             throw new BadRequestException("ошибка преобразования Id владельца:" + e.getMessage());
         }
-
         log.info("{}[32m ==> GET bookings/owner?state={} <=={}[37m", (char) 27, stateParam, (char) 27);
         StateStatusReq state = StateStatusReq.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        return ResponseEntity.ok().body(bookingClient.getBookingsByOwner(ownerId, state, from, size));
+        return  bookingClient.getBookingsByOwner(ownerId, state, from, size);
     }
 
     // Получение списка всех бронирований текущего пользователя

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class BookingStatusDto {
 
-    public Long id;
-    public Boolean approve;
+    private Long id;
+    private Boolean approve;
 
 }

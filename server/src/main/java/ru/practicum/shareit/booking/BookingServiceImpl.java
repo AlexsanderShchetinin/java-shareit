@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         if (!returnedBooking.getBookingItem().getOwner().getId().equals(ownerId)) {
             throw new InterruptionRuleException("Изменять статус может только владелец вещи");
         }
-        if (bookingStatusDto.approve) {
+        if (bookingStatusDto.getApprove()) {
             returnedBooking.setStatus(BookingStatus.APPROVED);
         } else {
             returnedBooking.setStatus(BookingStatus.REJECTED);

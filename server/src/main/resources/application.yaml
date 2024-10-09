@@ -1,11 +1,9 @@
-server:
-  port: 9090
+server.port: 9090
 
 spring:
   output.ansi.enabled: ALWAYS # цвет в логах должен быть виден всегда
   main:
     log-startup-info: true # выводим служебную информацию
-    banner-mode: console
 
   application.name: shareit
 
@@ -26,7 +24,7 @@ spring:
 logging.level:
   ru:
     practicum:
-      shareit: DEBUG
+      shareit: TRACE
   org.springframework:
     orm.jpa: INFO
     orm.jpa.JpaTransactionManager: DEBUG

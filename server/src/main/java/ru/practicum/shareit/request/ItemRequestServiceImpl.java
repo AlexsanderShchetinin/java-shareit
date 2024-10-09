@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.MyNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemResponseDto;
-import ru.practicum.shareit.request.mapper.*;
+import ru.practicum.shareit.request.mapper.ItemRequestListMapperImpl;
+import ru.practicum.shareit.request.mapper.ItemRequestMapperImpl;
+import ru.practicum.shareit.request.mapper.ItemResponseListMapperImpl;
 import ru.practicum.shareit.request.resp.ItemResponse;
 import ru.practicum.shareit.request.resp.ItemResponseRepository;
 import ru.practicum.shareit.user.User;
@@ -30,7 +32,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestMapperImpl requestMapper;
     private final ItemRequestListMapperImpl requestListMapper;
-    private final ItemResponseMapperImpl responseMapper;
     private final ItemResponseListMapperImpl responseListMapper;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

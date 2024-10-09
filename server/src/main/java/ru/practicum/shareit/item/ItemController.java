@@ -55,7 +55,11 @@ public class ItemController {
 
     @PostMapping("{itemId}/comment")
     public ResponseEntity<CommentDto> addComment(@RequestBody CommentCreationDto comment) {
+        log.info("{}[32m ==> SERVER--> POST/items/{itemId}={}/comment. addComment <=={}[37m",
+                (char) 27, comment.getItemId(), (char) 27);
         CommentDto newComment = itemService.addComment(comment);
+        log.info("{}[32m ==> COMPLETED POST/items/{itemId}={}/comment. ADDED COMMENT <=={}[37m",
+                (char) 27, comment.getItemId(), (char) 27);
         return ResponseEntity.status(HttpStatus.CREATED).body(newComment);
     }
 

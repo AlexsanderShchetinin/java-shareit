@@ -2,15 +2,12 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.validator.Marker;
-
-import java.util.List;
 
 /**
  * Created by Shchetinin Alexander 03.10.2024
@@ -40,7 +37,7 @@ public class ItemRequestController {
 
         log.info("{}[32m==> try to POST: addRequestItem, param: length description = {} <=={}[37m", (char) 27,
                 itemRequest.getDescription(), (char) 27);
-        return ResponseEntity.status(HttpStatus.CREATED).body(requestClient.add(userId, itemRequest).getBody());
+        return requestClient.add(userId, itemRequest);
     }
 
     @GetMapping
@@ -53,9 +50,8 @@ public class ItemRequestController {
                     (char) 27, e.getMessage() + e.getCause(), (char) 27);
             throw new BadRequestException("ошибка преобразования Id владельца:" + e.getMessage());
         }
-
         log.info("{}[32m ==> GET getOwnRequests, param: userId = {} <=={}[37m", (char) 27, userId, (char) 27);
-        return ResponseEntity.ok().body(requestClient.getOwnRequests(userId).getBody());
+        return requestClient.getOwnRequests(userId);
     }
 
     @GetMapping(path = "/all")
@@ -69,7 +65,7 @@ public class ItemRequestController {
             throw new BadRequestException("ошибка преобразования Id владельца:" + e.getMessage());
         }
         log.info("{}[32m ==> GET getAllRequests, param: userId = {} <=={}[37m", (char) 27, userId, (char) 27);
-        return ResponseEntity.ok().body(requestClient.getAllRequests(userId).getBody());
+        return requestClient.getAllRequests(userId);
     }
 
     @GetMapping(path = "/{requestId}")
@@ -85,7 +81,7 @@ public class ItemRequestController {
         }
         log.info("{}[32m ==> GET getRequestItem, param: userId = {}, requestId = {} <=={}[37m",
                 (char) 27, userId, requestId, (char) 27);
-        return ResponseEntity.ok().body(requestClient.getRequest(userId, requestId).getBody());
+        return requestClient.getRequest(userId, requestId);
     }
 
 }

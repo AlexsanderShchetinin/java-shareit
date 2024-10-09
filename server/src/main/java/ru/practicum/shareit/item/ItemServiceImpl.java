@@ -206,7 +206,8 @@ public class ItemServiceImpl implements ItemService {
 
         Booking booking = bookings.stream().min(Comparator.comparing(Booking::getStart))
                 .orElseThrow(() -> new BadRequestException("вещь или пользователь не найдена в БД"));
-        if (booking.getStart().isAfter(LocalDateTime.now())) {
+        if (booking.getStart().isAfter(LocalDateTime.now().plusSeconds(5))) {
+            log.warn("{} , current time:{}", booking.getStart(), LocalDateTime.now().plusSeconds(5));
             throw new BadRequestException("Автор не может оставлять комметнарии к вещи пока не забронирует её.");
         }
         Comment comment = itemMapper.toCommentModel(commentCreationDto);

@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreatingDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingStatusDto;
-import ru.practicum.shareit.exception.InterruptionRuleException;
 
 import java.util.List;
 
@@ -30,6 +28,8 @@ public class BookingController {
     public ResponseEntity<BookingDto> addBooking(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                  @RequestBody BookingCreatingDto booking) {
         BookingDto returnedBooking = service.create(ownerId, booking);
+        log.info("{}[32m ==> POST/bookings <== ADD NEW BOOKING {} COMPLETE {}[37m",
+                (char) 27, returnedBooking, (char) 27);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedBooking);
     }
 
@@ -38,8 +38,9 @@ public class BookingController {
     public ResponseEntity<BookingDto> changeStatus(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                    @PathVariable long bookingId,
                                                    @RequestBody BookingStatusDto bookingStatusDto) {
-
         BookingDto returnedBooking = service.changeStatus(ownerId, bookingStatusDto);
+        log.info("{}[32m ==> PATCH bookings/{}?approved={} <== FINISH REQUEST{}[37m",
+                (char) 27, bookingId, bookingStatusDto.getApprove(), (char) 27);
         return ResponseEntity.ok().body(returnedBooking);
     }
 

@@ -7,7 +7,6 @@ import lombok.Setter;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Created by Shchetinin Alexander 03.10.2024
