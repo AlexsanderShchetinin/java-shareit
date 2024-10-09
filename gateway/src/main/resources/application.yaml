@@ -1,0 +1,16 @@
+spring:
+  output.ansi.enabled: ALWAYS # цвет в логах должен быть виден всегда
+  main:
+    log-startup-info: true # выводим служебную информацию
+    banner-mode: console
+
+logging.level.org.springframework.web.client.RestTemplate: DEBUG
+
+server.port: 8080
+
+shareit-server.url: http://localhost:9090
+
+logging.level:
+  ru:
+    practicum:
+      shareit: INFO
