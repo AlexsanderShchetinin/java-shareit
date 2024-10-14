@@ -25,9 +25,9 @@ public class BookingController {
 
     // Добавление бронирования
     @PostMapping
-    public ResponseEntity<BookingDto> addBooking(@RequestHeader("X-Sharer-User-Id") String ownerId,
+    public ResponseEntity<BookingDto> addBooking(@RequestHeader("X-Sharer-User-Id") String bookerStr,
                                                  @RequestBody BookingCreatingDto booking) {
-        BookingDto returnedBooking = service.create(ownerId, booking);
+        BookingDto returnedBooking = service.create(bookerStr, booking);
         log.info("{}[32m ==> POST/bookings <== ADD NEW BOOKING {} COMPLETE {}[37m",
                 (char) 27, returnedBooking, (char) 27);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedBooking);
@@ -45,6 +45,7 @@ public class BookingController {
     }
 
     // получение бронирования по id
+    // Получить информацию о бронировании могут только владелец вещи или автор бронирования
     @GetMapping("/{bookingId}")
     public ResponseEntity<BookingDto> getById(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                               @PathVariable long bookingId) {
@@ -56,7 +57,7 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<List<BookingDto>> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") String bookerStr,
                                                               @RequestParam(defaultValue = "ALL") String state) {
-
+        log.info("{}[32m ==> GET bookings , Current bookerId={} <=={}[37m", (char) 27, bookerStr, (char) 27);
         return ResponseEntity.ok().body(service.getBookingsByBooker(bookerStr, state));
     }
 
@@ -64,7 +65,7 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                                @RequestParam(defaultValue = "ALL") String state) {
-
+        log.info("{}[32m ==> GET bookings/owner , Current ownerId={} <=={}[37m", (char) 27, ownerId, (char) 27);
         return ResponseEntity.ok().body(service.getBookingsByOwner(ownerId, state));
     }
 }

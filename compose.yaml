@@ -18,6 +18,7 @@ services:
       - "9090:9090"
     depends_on:
       - db
+      - db-test
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - SPRING_DATASOURCE_USERNAME=shareit
@@ -34,6 +35,23 @@ services:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=shareit
       - POSTGRES_PASSWORD=shareit
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-test:
+    image: postgres:16.1
+    container_name: shareit-test
+    ports:
+      - "7432:5432"
+    volumes:
+      - ./volumes-test/postgres:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=shareit-test
+      - POSTGRES_USER=shareit-test
+      - POSTGRES_PASSWORD=shareit-test
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s

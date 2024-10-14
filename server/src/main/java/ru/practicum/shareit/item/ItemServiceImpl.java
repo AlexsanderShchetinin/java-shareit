@@ -55,6 +55,7 @@ public class ItemServiceImpl implements ItemService {
                         () -> new MyNotFoundException("Владелец с id=" + ownerId + " не зарегистрирован в приложении"));
         Item item = itemMapper.toModel(itemDto);
 
+        // сохранение ответа в БД на запрос request, при наличии запроса в ItemDto
         if (itemDto.getRequestId() == null) {
             item.setRequest(null);
         } else {
@@ -101,6 +102,9 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemMapper.toModel(itemDto);
         item.setOwner(owner);
+        if (item.getRequest().getId() == 0) {
+            item.setRequest(null);
+        }
         Item updatedItem = itemRepository.save(item);
         return itemMapper.toDto(updatedItem);
     }

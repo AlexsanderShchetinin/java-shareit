@@ -43,7 +43,7 @@ public class UserController {
                                           @RequestBody UserDto newUser) {
         UserDto userDto = userService.update(userId, newUser);
         log.info("{}[32m ==> User {}  with id={} UPDATED <=={}[37m",
-                (char) 27,newUser.getName(), newUser.getId(), (char) 27);
+                (char) 27, newUser.getName(), newUser.getId(), (char) 27);
         return ResponseEntity.ok().body(userDto);
     }
 

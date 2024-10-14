@@ -73,6 +73,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getOwnRequests(String userStr) {
         long userId = Long.parseLong(userStr);
+        // Валидация пользователя
         userRepository.findById(userId)
                 .orElseThrow(
                         () -> new MyNotFoundException("Пользователь с id=" + userId + " не зарегистрирован"));
@@ -97,7 +98,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAllRequests(String userStr) {
         long userId = Long.parseLong(userStr);
-        // TODO
+        // Валидация пользователя
         userRepository.findById(userId)
                 .orElseThrow(
                         () -> new MyNotFoundException("Пользователь с id=" + userId + " не зарегистрирован"));

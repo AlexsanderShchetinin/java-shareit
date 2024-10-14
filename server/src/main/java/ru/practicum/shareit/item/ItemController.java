@@ -35,21 +35,21 @@ public class ItemController {
     @GetMapping("/{id}")
     public ResponseEntity<ItemBookTimeDto> getById(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                    @PathVariable long id) {
-        log.info("{}[32m ==> GET /user by id={} <=={}[37m",(char) 27, id, (char) 27);
+        log.info("{}[32m ==> GET /user by id={} <=={}[37m", (char) 27, id, (char) 27);
         return ResponseEntity.ok().body(itemService.getById(ownerId, id));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Collection<ItemDto>> getSelection(@RequestParam(defaultValue = "") String text) {
         List<ItemDto> returnedItems = itemService.getSelection(text);
-        log.info("{}[32m Get list items by search={}; size={}{}[37m",(char) 27, text, returnedItems.size(),(char) 27);
+        log.info("{}[32m Get list items by search={}; size={}{}[37m", (char) 27, text, returnedItems.size(), (char) 27);
         return ResponseEntity.ok().body(returnedItems);
     }
 
     @PostMapping
     public ResponseEntity<ItemDto> add(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                        @RequestBody @Validated(Marker.Create.class) ItemDto itemDto) {
-        log.info("{}[32m ==> POST item: ownerId={}, item={}{}[37m", (char) 27,ownerId, itemDto,(char) 27);
+        log.info("{}[32m ==> POST item: ownerId={}, item={}{}[37m", (char) 27, ownerId, itemDto, (char) 27);
         return ResponseEntity.ok().body(itemService.add(ownerId, itemDto));
     }
 

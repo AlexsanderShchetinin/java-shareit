@@ -47,6 +47,9 @@ public class BookingServiceImpl implements BookingService {
         if (!returnedItem.isAvailable()) {
             throw new BadRequestException("Вещь на данный момент недоступна для бронирования");
         }
+        if (Objects.equals(returnedItem.getOwner().getId(), bookerId)) {
+            throw new BadRequestException("Владелец не может бронировать собственные вещи");
+        }
         Booking booking = bookingMapper.toModel(bookingCreatingDto);
 
         booking.setBookingAuthor(returnedUser);
@@ -76,8 +79,6 @@ public class BookingServiceImpl implements BookingService {
             returnedBooking.setStatus(BookingStatus.REJECTED);
         }
         bookingRepository.save(returnedBooking);
-        Item item = returnedBooking.getBookingItem();
-        System.out.println(item);
         return bookingMapper.toDto(returnedBooking);
     }
 
@@ -97,6 +98,7 @@ public class BookingServiceImpl implements BookingService {
                 "или автор бронирования.");
     }
 
+    // Получение списка всех бронирований текущего пользователя
     @Override
     public List<BookingDto> getBookingsByBooker(String bookerStr, String state) {
         Long bookerId = Long.parseLong(bookerStr);

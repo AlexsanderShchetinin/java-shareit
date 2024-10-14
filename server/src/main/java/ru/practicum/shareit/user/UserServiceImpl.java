@@ -42,12 +42,15 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toModel(userDto);
         user.setId(userId);
+        // проверка на пустой email - если пустой то заполняем из тем что был в БД
         if (user.getEmail() == null || user.getEmail().isEmpty()) {
             user.setEmail(returnedUser.getEmail());
+            // проверка на пересечения с email других пользователей из БД
         } else if (!userRepository.getByEmail(user.getEmail()).isEmpty() &&
                 !user.getEmail().equals(returnedUser.getEmail())) {
             throw new DuplicatedException("Пользователь с таким email уже существует");
         }
+        // проверка на пустое имя - если пустое то заполняем из тем что было в БД
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(returnedUser.getName());
         }
