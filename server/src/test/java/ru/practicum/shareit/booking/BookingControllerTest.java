@@ -41,11 +41,11 @@ class BookingControllerTest {
     private MockMvc mvc;
 
     private List<UserDto> userDtos = new ArrayList<>();
-    private final static int AMOUNT_USER = 20;
 
     @BeforeEach
     void setUp() {
-        userDtos = makeUsers(AMOUNT_USER);
+        int amountUser = 20;
+        userDtos = makeUsers(amountUser);
     }
 
     @Test

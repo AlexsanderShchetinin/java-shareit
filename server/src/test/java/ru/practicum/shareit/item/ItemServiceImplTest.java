@@ -43,8 +43,8 @@ class ItemServiceImplTest {
     private final CommentRepository commentRepository;
     private final List<Long> userIds = new ArrayList<>();
     // задаем параметры для тестов, влияющие на наполнение БД данными (заполнять так чтобы произведение было четным)
-    private final static int AMOUNT_USER = 2;
-    private final static int AMOUNT_ITEM = 5;
+    private final int amountUser = 2;
+    private final int amountItem = 5;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class ItemServiceImplTest {
         userRepository.deleteAll();
 
         // добавляем в БД новых пользователей
-        List<UserDto> dtoUsers = makeUsersDto("SomeUser", "SomeEmail@ya.ru", AMOUNT_USER);
+        List<UserDto> dtoUsers = makeUsersDto("SomeUser", "SomeEmail@ya.ru", amountUser);
         for (UserDto dtoUser : dtoUsers) {
             userIds.add(userService.create(dtoUser).getId());
         }
@@ -66,7 +66,7 @@ class ItemServiceImplTest {
         // добавляем несколько Item для каждого пользователя
         for (Long userId : userIds) {
             List<ItemDto> itemDtoList = makeItems(
-                    "вещичка", "очень полезная и нужная", userId, AMOUNT_ITEM);
+                    "вещичка", "очень полезная и нужная", userId, amountItem);
 
             // добавлем все вещи одного пользователя в БД
             for (ItemDto itemDto : itemDtoList) {
@@ -128,7 +128,7 @@ class ItemServiceImplTest {
         // добавляем несколько Item для каждого пользователя
         for (Long userId : userIds) {
             List<ItemDto> itemDtoList = makeItems(
-                    "Айтем", "тест получения айтем по айди", userId, AMOUNT_ITEM);
+                    "Айтем", "тест получения айтем по айди", userId, amountItem);
 
             // добавлем и получаем все вещи одного пользователя в БД
             for (ItemDto itemDto : itemDtoList) {
@@ -154,7 +154,7 @@ class ItemServiceImplTest {
         // добавляем нужные Item для каждого пользователя
         for (Long userId : userIds) {
             List<ItemDto> itemDtoList = makeAvailableItems(
-                    "For selection", "тест поиска айтемов", userId, AMOUNT_ITEM);
+                    "For selection", "тест поиска айтемов", userId, amountItem);
             for (ItemDto itemDto : itemDtoList) {
                 service.add(userId.toString(), itemDto);
             }
@@ -163,7 +163,7 @@ class ItemServiceImplTest {
         // добавляем Item для каждого пользователя но которые не доступны (available=false)
         for (Long userId : userIds) {
             List<ItemDto> itemDtoList = makeItems(
-                    "For selection", "тест поиска айтемов", userId, AMOUNT_ITEM);
+                    "For selection", "тест поиска айтемов", userId, amountItem);
             for (ItemDto itemDto : itemDtoList) {
                 service.add(userId.toString(), itemDto);
             }
@@ -172,7 +172,7 @@ class ItemServiceImplTest {
         // добавляем вспомагательные Item для каждого пользователя
         for (Long userId : userIds) {
             List<ItemDto> itemDtoList = makeItems(
-                    "Второстепенный айтем", "для разнообразия", userId, AMOUNT_ITEM);
+                    "Второстепенный айтем", "для разнообразия", userId, amountItem);
             for (ItemDto itemDto : itemDtoList) {
                 service.add(userId.toString(), itemDto);
             }
@@ -187,7 +187,7 @@ class ItemServiceImplTest {
 
         // проверка
         assertThat(select1.size(), equalTo(select2.size()));
-        assertThat(select1.size(), is(AMOUNT_USER * AMOUNT_ITEM));
+        assertThat(select1.size(), is(amountUser * amountItem));
         assertThat(select1.getFirst().getId(), equalTo(select2.getFirst().getId()));
         assertThat(select1.getLast().getId(), equalTo(select2.getLast().getId()));
         assertThat(select3.toArray(), is(emptyArray()));
@@ -206,7 +206,7 @@ class ItemServiceImplTest {
             if (userIds.size() / 2 >= i) {
 
                 List<ItemDto> itemDtoList = makeAvailableItems(
-                        "Айтем для коммента", "дабы добавить comment сюда", userId, AMOUNT_ITEM);
+                        "Айтем для коммента", "дабы добавить comment сюда", userId, amountItem);
 
                 // добавлем  все вещи одного пользователя в БД
                 for (ItemDto itemDto : itemDtoList) {
@@ -237,7 +237,7 @@ class ItemServiceImplTest {
                                 "WHERE c.author.id = :id", Comment.class);
                 List<Comment> resp = updQuery.setParameter("id", bookUser).getResultList();
 
-                assertThat(resp.size(), is(AMOUNT_USER * AMOUNT_ITEM / 2));
+                assertThat(resp.size(), is(amountUser * amountItem / 2));
             }
 
             // пытаемся добавить комментарий, не забронировав вещь
@@ -254,7 +254,7 @@ class ItemServiceImplTest {
                                 "JOIN c.author AS u ", Comment.class);
                 List<Comment> respAll = updQuery.getResultList();
 
-                assertThat(respAll.size(), is(AMOUNT_USER * AMOUNT_ITEM * bookUsers.size() / 2));
+                assertThat(respAll.size(), is(amountUser * amountItem * bookUsers.size() / 2));
             } catch (BadRequestException e) {
                 // DO NOTHING, JUST CATCH
             }

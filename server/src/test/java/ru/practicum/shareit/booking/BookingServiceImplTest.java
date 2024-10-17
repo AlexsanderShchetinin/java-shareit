@@ -48,12 +48,11 @@ class BookingServiceImplTest {
     private final ItemServiceImpl itemService;
     private final BookingServiceImpl bookingService;
     // задаем параметры для теста, влияющие на наполнение БД данными
-    private final static int AMOUNT_USER = 9;  // минимум 3 но не больше 80, четное 3, иначе тест не пройдет ввиду кол-ва дней в месяце
-    private final static int AMOUNT_ITEM = 5;
+    private final  int amountUser = 9;  // минимум 3 но не больше 80, четное 3, иначе тест не пройдет ввиду кол-ва дней в месяце
+    private final  int amountItem = 5;
     private final long wait = 3;
     // запоминаем добавленных пользователей и айтемов
     private List<Long> userIds;
-    private List<ItemDto> userItems;
     private List<BookingDto> returnedBookings;
 
     @BeforeEach
@@ -67,10 +66,10 @@ class BookingServiceImplTest {
         // обнуляем параметры теста
         int size = 0;
         userIds = new ArrayList<>();
-        userItems = new ArrayList<>();
+        List<ItemDto> userItems = new ArrayList<>();
         returnedBookings = new ArrayList<>();
         // добавляем в БД новых пользователей
-        List<UserDto> dtoUsers = makeUsersDto("UserForTestBooking", "BookEmail@ya.ru", AMOUNT_USER);
+        List<UserDto> dtoUsers = makeUsersDto("UserForTestBooking", "BookEmail@ya.ru", amountUser);
         for (UserDto dtoUser : dtoUsers) {
             userIds.add(userService.create(dtoUser).getId());
         }
@@ -79,7 +78,7 @@ class BookingServiceImplTest {
             size++;
             if (userIds.size() / 3 * 2 >= size) {
                 List<ItemDto> itemDtoList = makeItems(
-                        "айтем", "для теста на бронирование", userId, AMOUNT_ITEM);
+                        "айтем", "для теста на бронирование", userId, amountItem);
                 // добавлем по одной вещи каждого пользователя в БД
                 for (ItemDto itemDto : itemDtoList) {
                     userItems.add(itemService.add(userId.toString(), itemDto));
@@ -97,7 +96,7 @@ class BookingServiceImplTest {
                 try {
                     // 2) бронирование осуществляет владелец вещи
                     BookingCreatingDto bookingCreatingDto2 = makeNewBookingHours(userItems.get(
-                            (size * AMOUNT_ITEM) - 1).getId(), LocalDateTime.now(), size);
+                            (size * amountItem) - 1).getId(), LocalDateTime.now(), size);
                     returnedBookings.add(bookingService.create(userId.toString(), bookingCreatingDto2));
                 } catch (BadRequestException e) {
                     // do nothing
@@ -121,7 +120,7 @@ class BookingServiceImplTest {
         List<Booking> bookings = updQuery.getResultList();
 
         // проверяем количество всех добавленных бронирований
-        assertThat(bookings.size(), equalTo(AMOUNT_USER * AMOUNT_USER * AMOUNT_ITEM * 2 / 9));
+        assertThat(bookings.size(), equalTo(amountUser * amountUser * amountItem * 2 / 9));
         assertThat(bookings.size(), equalTo(returnedBookings.size()));
 
         // подтверждаем бронирование владельцем каждой одной вещи, остальные бронирования отклоняем
@@ -135,7 +134,7 @@ class BookingServiceImplTest {
         List<Booking> bookings2 = updQuery2.getResultList();
 
         // проверяем количество всех подтвержденных бронирований - должно быть 2/27 * на квадрат кол-ва пользователей * кол-ва items
-        assertThat(bookings2.size(), equalTo(AMOUNT_USER * AMOUNT_USER * AMOUNT_ITEM * 2 / 27));
+        assertThat(bookings2.size(), equalTo(amountUser * amountUser * amountItem * 2 / 27));
     }
 
     @Test
@@ -221,7 +220,7 @@ class BookingServiceImplTest {
                 List<BookingDto> bookings = bookingService.getBookingsByOwner(userId.toString(), "WAItInG");
 
                 assertThat(bookings.size(), equalTo(resp.size()));
-                assertThat(bookings.size(), equalTo(AMOUNT_USER * AMOUNT_ITEM / 3));
+                assertThat(bookings.size(), equalTo(amountUser * amountItem / 3));
             }
         }
 
@@ -241,8 +240,8 @@ class BookingServiceImplTest {
                 List<BookingDto> approves = bookingService.getBookingsByOwner(userId.toString(), "CURrENt");
                 List<BookingDto> all = bookingService.getBookingsByOwner(userId.toString(), "alL");
 
-                assertThat(rejects.size(), equalTo(AMOUNT_USER * AMOUNT_ITEM * 2 / 9));
-                assertThat(approves.size(), equalTo(AMOUNT_USER * AMOUNT_ITEM / 9));
+                assertThat(rejects.size(), equalTo(amountUser * amountItem * 2 / 9));
+                assertThat(approves.size(), equalTo(amountUser * amountItem / 9));
                 assertThat(all.size(), equalTo(rejects.size() + approves.size()));
             }
         }
@@ -281,8 +280,8 @@ class BookingServiceImplTest {
                 List<BookingDto> futures = bookingService.getBookingsByOwner(userId.toString(), "future");
 
                 // общее
-                assertThat(pasts.size(), equalTo((AMOUNT_USER * AMOUNT_ITEM) - AMOUNT_ITEM));
-                assertThat(futures.size(), equalTo((AMOUNT_USER * AMOUNT_ITEM) - AMOUNT_ITEM));
+                assertThat(pasts.size(), equalTo((amountUser * amountItem) - amountItem));
+                assertThat(futures.size(), equalTo((amountUser * amountItem) - amountItem));
             }
         }
     }
@@ -304,7 +303,7 @@ class BookingServiceImplTest {
                 List<BookingDto> bookings = bookingService.getBookingsByBooker(userId.toString(), "WAItInG");
 
                 assertThat(bookings.size(), equalTo(resp.size()));
-                assertThat(bookings.size(), equalTo(AMOUNT_USER * AMOUNT_ITEM * 2 / 3));
+                assertThat(bookings.size(), equalTo(amountUser * amountItem * 2 / 3));
             }
         }
 
@@ -425,7 +424,7 @@ class BookingServiceImplTest {
                 for (Long l : itemId) {
                     for (BookingDto returnedBooking : returnedBookings) {
                         if (returnedBooking.getItem().getId().equals(l)) {
-                            if (count == AMOUNT_USER / 3) {
+                            if (count == amountUser / 3) {
                                 bookingService.changeStatus(userId.toString(),
                                         makeBookStatus(returnedBooking.getId(), true));
                                 count = 1;
@@ -452,7 +451,7 @@ class BookingServiceImplTest {
             List<Booking> resp = updQuery.setParameter("userId", userId).getResultList();
             if (!resp.isEmpty()) {
                 for (Booking booking : resp) {
-                    if (count == AMOUNT_USER / 3) {
+                    if (count == amountUser / 3) {
                         bookingService.changeStatus(userId.toString(),
                                 makeBookStatus(booking.getId(), true));
                         count = 1;

@@ -43,9 +43,8 @@ class ItemRequestServiceImplTest {
     private final ItemServiceImpl itemService;
     private final ItemRequestServiceImpl service;
     // задаем параметры для теста, влияющие на наполнение БД данными
-    private final static int AMOUNT_USER = 5;
-    private final static int AMOUNT_ITEM = 4;
-    private final static int AMOUNT_ITEM_WITH_REQ = 2;  // в setUp() равно вызовам service.add()
+    private final int amountUser = 5;
+    private final int amountItemWithReq = 2;  // в setUp() равно вызовам service.add()
     // переменные для добавленных пользователей и айтемов
     private final List<Long> userIds = new ArrayList<>();
     private final List<ItemDto> userItems = new ArrayList<>();
@@ -61,7 +60,7 @@ class ItemRequestServiceImplTest {
         userRepository.deleteAll();
 
         // добавляем в БД новых пользователей
-        List<UserDto> dtoUsers = makeUsersDto("UserForTestRequest", "BookEmail@ya.ru", AMOUNT_USER);
+        List<UserDto> dtoUsers = makeUsersDto("UserForTestRequest", "BookEmail@ya.ru", amountUser);
         for (UserDto dtoUser : dtoUsers) {
             userIds.add(userService.create(dtoUser).getId());
         }
@@ -86,8 +85,9 @@ class ItemRequestServiceImplTest {
                     .toList());
 
             // добавляем Item без requestId
+            int amountItem = 4;
             List<ItemDto> itemDtoList = makeItems(
-                    "айтем без запроса", "тест на ItemRequest", userId, AMOUNT_ITEM);
+                    "айтем без запроса", "тест на ItemRequest", userId, amountItem);
             for (ItemDto itemDto : itemDtoList) {
                 userItems.add(itemService.add(userId.toString(), itemDto));
             }
@@ -117,7 +117,7 @@ class ItemRequestServiceImplTest {
 
             // проверка записей в БД и возврата из сервиса
             assertThat(requestsFromService.size(), equalTo(resp.size()));
-            assertThat(resp.size(), equalTo(AMOUNT_ITEM_WITH_REQ));
+            assertThat(resp.size(), equalTo(amountItemWithReq));
         }
     }
 
@@ -159,7 +159,7 @@ class ItemRequestServiceImplTest {
 
             // проверка записей в БД и возврата из сервиса
             assertThat(requestsFromService.size(), equalTo(resp.size()));
-            assertThat(resp.size(), equalTo(AMOUNT_ITEM_WITH_REQ * (AMOUNT_USER - 1)));
+            assertThat(resp.size(), equalTo(amountItemWithReq * (amountUser - 1)));
         }
     }
 

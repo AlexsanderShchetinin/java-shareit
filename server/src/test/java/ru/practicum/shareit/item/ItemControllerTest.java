@@ -39,17 +39,17 @@ class ItemControllerTest {
     private MockMvc mvc;
 
     private List<UserDto> userDtos = new ArrayList<>();
-    private final static int AMOUNT_USER = 20;
-    private final static int AMOUNT_ITEM = 10;
+    private final int amountItem = 10;
 
     @BeforeEach
     void setUp() {
-        userDtos = makeUsers(AMOUNT_USER);
+        int amountUser = 20;
+        userDtos = makeUsers(amountUser);
     }
 
     @Test
     void getAllByOwner() throws Exception {
-        List<ItemBookTimeDto> itemsDto = makeAvailableBookTimeItems(AMOUNT_ITEM);
+        List<ItemBookTimeDto> itemsDto = makeAvailableBookTimeItems(amountItem);
 
         for (UserDto userDto : userDtos) {
             when(itemService.getAllByOwner(Mockito.anyString()))
@@ -62,11 +62,11 @@ class ItemControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[*].id").
-                            value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getId().intValue())))
-                    .andExpect(jsonPath("$[*].name").value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getName())))
+                    .andExpect(jsonPath("$[*].id")
+                            .value(hasItem(itemsDto.get(amountItem / 2).getId().intValue())))
+                    .andExpect(jsonPath("$[*].name").value(hasItem(itemsDto.get(amountItem / 2).getName())))
                     .andExpect(jsonPath("$[*].description")
-                            .value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getDescription())))
+                            .value(hasItem(itemsDto.get(amountItem / 2).getDescription())))
                     .andExpect(jsonPath("$.[0].available", is(itemsDto.getFirst().getAvailable())));
         }
     }
@@ -98,7 +98,7 @@ class ItemControllerTest {
 
     @Test
     void getSelection() throws Exception {
-        List<ItemDto> itemsDto = makeAvailableItems(AMOUNT_ITEM);
+        List<ItemDto> itemsDto = makeAvailableItems(amountItem);
 
         for (UserDto userDto : userDtos) {
             when(itemService.getSelection(Mockito.anyString()))
@@ -111,11 +111,11 @@ class ItemControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[*].id").
-                            value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getId().intValue())))
-                    .andExpect(jsonPath("$[*].name").value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getName())))
+                    .andExpect(jsonPath("$[*].id")
+                            .value(hasItem(itemsDto.get(amountItem / 2).getId().intValue())))
+                    .andExpect(jsonPath("$[*].name").value(hasItem(itemsDto.get(amountItem / 2).getName())))
                     .andExpect(jsonPath("$[*].description")
-                            .value(hasItem(itemsDto.get(AMOUNT_ITEM / 2).getDescription())))
+                            .value(hasItem(itemsDto.get(amountItem / 2).getDescription())))
                     .andExpect(jsonPath("$.[0].available", is(itemsDto.getFirst().getAvailable())));
         }
     }

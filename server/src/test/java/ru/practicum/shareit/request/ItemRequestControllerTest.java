@@ -39,13 +39,12 @@ class ItemRequestControllerTest {
     private MockMvc mvc;
 
     private List<UserDto> userDtos = new ArrayList<>();
-    private final static int AMOUNT_USER = 20;
-    private final static int AMOUNT_REQ = 10;
-
+    private final int amountReq = 10;
 
     @BeforeEach
     void setUp() {
-        userDtos = makeUsers(AMOUNT_USER);
+        int amountUser = 20;
+        userDtos = makeUsers(amountUser);
     }
 
     @Test
@@ -71,7 +70,7 @@ class ItemRequestControllerTest {
     @Test
     void getOwnRequests() throws Exception {
         for (UserDto userDto : userDtos) {
-            List<ItemRequestDto> fullRequestsDto = makeFullRequestsDto(99, 199, AMOUNT_REQ);
+            List<ItemRequestDto> fullRequestsDto = makeFullRequestsDto(99, 199, amountReq);
             when(service.getOwnRequests(Mockito.anyString()))
                     .thenReturn(fullRequestsDto);
 
@@ -80,16 +79,16 @@ class ItemRequestControllerTest {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[*].id").value(hasItem(98 + AMOUNT_REQ)))
+                    .andExpect(jsonPath("$[*].id").value(hasItem(98 + amountReq)))
                     .andExpect(jsonPath("$[*].description").value(
-                            hasItem("only request num=" + (AMOUNT_REQ - 1))));
+                            hasItem("only request num=" + (amountReq - 1))));
         }
     }
 
     @Test
     void getAllRequests() throws Exception {
         for (UserDto userDto : userDtos) {
-            List<ItemRequestDto> fullRequestsDto = makeFullRequestsDto(99, 199, AMOUNT_REQ);
+            List<ItemRequestDto> fullRequestsDto = makeFullRequestsDto(99, 199, amountReq);
             when(service.getAllRequests(Mockito.anyString()))
                     .thenReturn(fullRequestsDto);
 
@@ -98,9 +97,9 @@ class ItemRequestControllerTest {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[*].id").value(hasItem(98 + AMOUNT_REQ)))
+                    .andExpect(jsonPath("$[*].id").value(hasItem(98 + amountReq)))
                     .andExpect(jsonPath("$[*].description").value(
-                            hasItem("only request num=" + (AMOUNT_REQ - 1))));
+                            hasItem("only request num=" + (amountReq - 1))));
         }
     }
 
