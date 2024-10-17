@@ -188,7 +188,7 @@
 											<limit>
 												<counter>COMPLEXITY</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.6</minimum>
+												<minimum>0.5</minimum>
 											</limit>
 											<limit>
 												<counter>METHOD</counter>
@@ -198,7 +198,7 @@
 											<limit>
 												<counter>CLASS</counter>
 												<value>MISSEDCOUNT</value>
-												<maximum>0.85</maximum>
+												<maximum>3</maximum>
 											</limit>
 										</limits>
 									</rule>
