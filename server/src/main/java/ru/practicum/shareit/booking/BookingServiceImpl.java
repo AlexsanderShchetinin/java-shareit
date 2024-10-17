@@ -16,8 +16,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -71,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
                         new BadRequestException("Бронирования с id=" + bookingStatusDto.getId() + " не существует."));
 
         if (!returnedBooking.getBookingItem().getOwner().getId().equals(ownerId)) {
-            throw new InterruptionRuleException("Изменять статус может только владелец вещи");
+            throw new InterruptionRuleException("Изменять статус бронирования может только владелец вещи");
         }
         if (bookingStatusDto.getApprove()) {
             returnedBooking.setStatus(BookingStatus.APPROVED);
@@ -82,6 +81,8 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toDto(returnedBooking);
     }
 
+    // получение бронирования по id
+    // Получить информацию о бронировании могут только владелец вещи или автор бронирования
     @Override
     public BookingDto getById(String userStr, long bookingId) {
         Long userId = Long.parseLong(userStr);
@@ -98,29 +99,28 @@ public class BookingServiceImpl implements BookingService {
                 "или автор бронирования.");
     }
 
-    // Получение списка всех бронирований текущего пользователя
+    // Получение списка всех бронирований текущего пользователя с ранжированием по статусам
     @Override
     public List<BookingDto> getBookingsByBooker(String bookerStr, String state) {
         Long bookerId = Long.parseLong(bookerStr);
         userRepository.findById(bookerId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + bookerId + " не существует."));
         return switch (convertToState(state)) {
-            case CURRENT -> bookingRepository.findAllCurrentByBooker(Timestamp.from(Instant.now()),
-                            bookerId).stream()
+            case CURRENT -> bookingRepository.findAllCurrentByBooker(LocalDateTime.now(), bookerId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
-            case WAITING -> bookingRepository.findAllByBookerWithStatus(StateStatus.WAITING.toString(), bookerId)
+            case WAITING -> bookingRepository.findAllByBookerWithStatus(BookingStatus.WAITING, bookerId)
                     .stream()
                     .map(bookingMapper::toDto)
                     .toList();
-            case PAST -> bookingRepository.findAllPastByBooker(Timestamp.from(Instant.now()), bookerId).stream()
+            case PAST -> bookingRepository.findAllPastByBooker(LocalDateTime.now(), bookerId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
-            case FUTURE -> bookingRepository.findAllFutureByBooker(Timestamp.from(Instant.now()), bookerId).stream()
+            case FUTURE -> bookingRepository.findAllFutureByBooker(LocalDateTime.now(), bookerId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
             case REJECTED -> bookingRepository
-                    .findAllByBookerWithStatus(StateStatus.REJECTED.toString(), bookerId).stream()
+                    .findAllByBookerWithStatus(BookingStatus.REJECTED, bookerId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
             // default = ALL
@@ -137,21 +137,21 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new MyNotFoundException("Владельца с id=" + ownerId + " не существует."));
         if (!itemRepository.findAllByOwnerId(ownerId).isEmpty()) {
             return switch (convertToState(state)) {
-                case CURRENT -> bookingRepository.findAllCurrentByOwner(Timestamp.from(Instant.now()), ownerId).stream()
+                case CURRENT -> bookingRepository.findAllCurrentByOwner(LocalDateTime.now(), ownerId).stream()
                         .map(bookingMapper::toDto)
                         .toList();
-                case WAITING -> bookingRepository.findAllByOwnerWithStatus(StateStatus.WAITING.toString(), ownerId)
+                case WAITING -> bookingRepository.findAllByOwnerWithStatus(BookingStatus.WAITING, ownerId)
                         .stream()
                         .map(bookingMapper::toDto)
                         .toList();
-                case PAST -> bookingRepository.findAllPastByOwner(Timestamp.from(Instant.now()), ownerId).stream()
+                case PAST -> bookingRepository.findAllPastByOwner(LocalDateTime.now(), ownerId).stream()
                         .map(bookingMapper::toDto)
                         .toList();
-                case FUTURE -> bookingRepository.findAllFutureByOwner(Timestamp.from(Instant.now()), ownerId).stream()
+                case FUTURE -> bookingRepository.findAllFutureByOwner(LocalDateTime.now(), ownerId).stream()
                         .map(bookingMapper::toDto)
                         .toList();
                 case REJECTED -> bookingRepository
-                        .findAllByOwnerWithStatus(StateStatus.REJECTED.toString(), ownerId).stream()
+                        .findAllByOwnerWithStatus(BookingStatus.REJECTED, ownerId).stream()
                         .map(bookingMapper::toDto)
                         .toList();
                 // default = ALL

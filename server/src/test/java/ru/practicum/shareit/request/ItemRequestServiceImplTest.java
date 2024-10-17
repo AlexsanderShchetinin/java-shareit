@@ -5,9 +5,12 @@ import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.exception.MyNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemServiceImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -22,11 +25,13 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemRequestServiceImplTest {
 
+    private static final Logger log = LoggerFactory.getLogger(ItemRequestServiceImplTest.class);
     private final ItemRequestRepository repository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
@@ -37,6 +42,15 @@ class ItemRequestServiceImplTest {
     private final UserServiceImpl userService;
     private final ItemServiceImpl itemService;
     private final ItemRequestServiceImpl service;
+    // задаем параметры для теста, влияющие на наполнение БД данными
+    private final static int AMOUNT_USER = 5;
+    private final static int AMOUNT_ITEM = 4;
+    private final static int AMOUNT_ITEM_WITH_REQ = 2;  // в setUp() равно вызовам service.add()
+    // переменные для добавленных пользователей и айтемов
+    private final List<Long> userIds = new ArrayList<>();
+    private final List<ItemDto> userItems = new ArrayList<>();
+    private final List<Long> requestIds = new ArrayList<>();
+    private final List<ItemRequestDto> requestsDto = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -45,19 +59,6 @@ class ItemRequestServiceImplTest {
         repository.deleteAll();
         itemRepository.deleteAll();
         userRepository.deleteAll();
-    }
-
-    @Test
-    void getOwnRequests() {
-
-        // задаем параметры для теста, влияющие на наполнение БД данными
-        final int AMOUNT_USER = 5;
-        final int AMOUNT_ITEM = 4;
-
-        // запоминаем добавленных пользователей и айтемов
-        List<Long> userIds = new ArrayList<>();
-        List<ItemDto> userItems = new ArrayList<>();
-        List<Long> requestDtos = new ArrayList<>();
 
         // добавляем в БД новых пользователей
         List<UserDto> dtoUsers = makeUsersDto("UserForTestRequest", "BookEmail@ya.ru", AMOUNT_USER);
@@ -67,17 +68,23 @@ class ItemRequestServiceImplTest {
 
         for (Long userId : userIds) {
             // Добавляем запросы в БД
-            requestDtos.add(service.add(userId.toString(),
-                    ItemRequestDto.builder()
-                            .description("нужна вещица для userId=" + userId)
-                            .build()).getId());
-            requestDtos.add(service.add(userId.toString(),
-                    ItemRequestDto.builder()
-                            .description("нужна вторая вещь для userId=" + userId)
-                            .build()).getId());
-        }
+            requestsDto.add((service.add(userId.toString(),
+                            ItemRequestDto.builder()
+                                    .description("нужна вещица для userId=" + userId)
+                                    .build()
+                    ))
+            );
+            requestsDto.add(service.add(userId.toString(),
+                            ItemRequestDto.builder()
+                                    .description("нужна вторая вещь для userId=" + userId)
+                                    .build()
+                    )
+            );
+            // запоминаем id запросов
+            requestIds.addAll(requestsDto.stream()
+                    .map(ItemRequestDto::getId)
+                    .toList());
 
-        for (Long userId : userIds) {
             // добавляем Item без requestId
             List<ItemDto> itemDtoList = makeItems(
                     "айтем без запроса", "тест на ItemRequest", userId, AMOUNT_ITEM);
@@ -87,25 +94,74 @@ class ItemRequestServiceImplTest {
 
             // добавляем Item с requestId
             List<ItemDto> itemDtoList2 = makeItemsWithReq(
-                    "айтем с запросом", "для теста на ItemRequest", userId, requestDtos);
+                    "айтем с запросом", "для теста на ItemRequest=", userId, requestIds);
             for (ItemDto itemDto : itemDtoList2) {
                 userItems.add(itemService.add(userId.toString(), itemDto));
             }
+            // очищаем id запросов для след юзера
+            requestIds.clear();
+        }
+    }
 
+    @Test
+    void getOwnRequests() {
+        for (Long userId : userIds) {
             TypedQuery<ItemRequest> updQuery1 = em.createQuery(
                     "SELECT ir " +
                             "FROM ItemRequest AS ir " +
                             "JOIN ir.requestOwner AS u " +
-                            "WHERE u.id = :id", ItemRequest.class);
-            List<ItemRequest> itemRequestsFromDB = updQuery1.setParameter("id", userId).getResultList();
+                            "WHERE u.id = :id ", ItemRequest.class);
+            List<ItemRequest> resp = updQuery1.setParameter("id", userId).getResultList();
 
-            // проверка количества записей в БД
-            assertThat(itemRequestsFromDB.size(), equalTo(2));
+            List<ItemRequestDto> requestsFromService = service.getOwnRequests(userId.toString());
 
+            // проверка записей в БД и возврата из сервиса
+            assertThat(requestsFromService.size(), equalTo(resp.size()));
+            assertThat(resp.size(), equalTo(AMOUNT_ITEM_WITH_REQ));
         }
-
     }
 
+    @Test
+    void getReqById() {
+        for (ItemRequestDto requestDto : requestsDto) {
+            TypedQuery<ItemRequest> updQuery1 = em.createQuery(
+                    "SELECT ir " +
+                            "FROM ItemRequest AS ir " +
+                            "WHERE ir.id = :id ", ItemRequest.class);
+            ItemRequest resp = updQuery1.setParameter("id", requestDto.getId()).getSingleResult();
+
+            try {
+                ItemRequestDto itemRequestDto = service.get("9999", requestDto.getId());
+            } catch (MyNotFoundException e) {
+                log.info("отлов попытки получения request некорректным пользователем");
+            }
+
+            ItemRequestDto itemRequestDto = service.get(userIds.getFirst().toString(), requestDto.getId());
+
+            assertThat(resp.getDescription(), equalTo(requestDto.getDescription()));
+            assertThat(resp.getDescription(), equalTo(itemRequestDto.getDescription()));
+            assertThat(resp.getId(), notNullValue());
+            assertThat(itemRequestDto.getId(), equalTo(resp.getId()));
+        }
+    }
+
+    @Test
+    void getAllRequests() {  // должен возвращать все запросы, исключая те что были созданы пользователем
+        for (Long userId : userIds) {
+            TypedQuery<ItemRequest> updQuery1 = em.createQuery(
+                    "SELECT ir " +
+                            "FROM ItemRequest AS ir " +
+                            "JOIN ir.requestOwner AS u " +
+                            "WHERE u.id != :id ", ItemRequest.class);
+            List<ItemRequest> resp = updQuery1.setParameter("id", userId).getResultList();
+
+            List<ItemRequestDto> requestsFromService = service.getAllRequests(userId.toString());
+
+            // проверка записей в БД и возврата из сервиса
+            assertThat(requestsFromService.size(), equalTo(resp.size()));
+            assertThat(resp.size(), equalTo(AMOUNT_ITEM_WITH_REQ * (AMOUNT_USER - 1)));
+        }
+    }
 
     private List<ItemDto> makeItems(String name, String description, long userId, int amountItem) {
         List<ItemDto> items = new ArrayList<>();
@@ -123,8 +179,8 @@ class ItemRequestServiceImplTest {
         List<ItemDto> items = new ArrayList<>();
         for (long req : requestIds) {
             items.add(ItemDto.builder()
-                    .name(name + "_запроса " + req + " владельца с id=" + userId)
-                    .description(description + "_запроса " + req + " владельца с id=" + userId)
+                    .name(name + req + " владельца с id=" + userId)
+                    .description(description + req + " владельца с id=" + userId)
                     .available(true)
                     .requestId(req)
                     .build());

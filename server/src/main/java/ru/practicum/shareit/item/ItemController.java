@@ -39,6 +39,8 @@ public class ItemController {
         return ResponseEntity.ok().body(itemService.getById(ownerId, id));
     }
 
+    // поиск вещей по наличию текста в полях name или description
+    // если текст в URI пустой, то поиск возвращает пустую коллекцию
     @GetMapping("/search")
     public ResponseEntity<Collection<ItemDto>> getSelection(@RequestParam(defaultValue = "") String text) {
         List<ItemDto> returnedItems = itemService.getSelection(text);
