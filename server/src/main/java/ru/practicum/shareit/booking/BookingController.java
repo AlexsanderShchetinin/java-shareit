@@ -55,8 +55,8 @@ public class BookingController {
 
     // Получение списка всех бронирований текущего пользователя
     @GetMapping
-    public ResponseEntity<List<BookingDto>> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") String bookerStr,
-                                                              @RequestParam(defaultValue = "ALL") String state) {
+    public ResponseEntity<List<BookingDto>> getBookingsByBooker(@RequestHeader("X-Sharer-User-Id") String bookerStr,
+                                                                @RequestParam(defaultValue = "ALL") String state) {
         log.info("{}[32m ==> GET bookings , Current bookerId={} <=={}[37m", (char) 27, bookerStr, (char) 27);
         return ResponseEntity.ok().body(service.getBookingsByBooker(bookerStr, state));
     }

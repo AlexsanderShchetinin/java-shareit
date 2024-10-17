@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Builder
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
@@ -69,10 +71,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAll() {
         return userListMapper.toListDto(userRepository.findAll());
-
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(long id) {
         userRepository.findById(id)
                 .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
