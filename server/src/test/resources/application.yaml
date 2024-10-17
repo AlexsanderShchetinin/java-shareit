@@ -16,10 +16,10 @@ spring:
     init.mode: always
 
   datasource:
+    url: jdbc:h2:file:./db/shareit-server
+    driverClassName: org.h2.Driver
     username: "shareit-test"
     password: "shareit-test"
-    url: "jdbc:postgresql://localhost:7432/shareit-test"
-    driver-class-name: "org.postgresql.Driver"
 
 logging.level:
   ru:
