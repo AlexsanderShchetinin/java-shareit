@@ -23,7 +23,7 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "request_owner_id")
     private User requestOwner;  // идентификатор пользователя, создавшего запрос.
 

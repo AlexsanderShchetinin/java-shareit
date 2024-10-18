@@ -6,7 +6,7 @@ import org.mapstruct.Named;
 import ru.practicum.shareit.user.User;
 
 @Mapper(componentModel = "spring")
-public interface BookingUserConverter {
+public interface BookingUserMapper {
 
     @Named("toUser")
     @Mapping(target = "id", source = "id")

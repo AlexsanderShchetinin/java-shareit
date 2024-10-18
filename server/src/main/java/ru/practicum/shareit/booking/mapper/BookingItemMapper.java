@@ -6,7 +6,7 @@ import org.mapstruct.Named;
 import ru.practicum.shareit.item.model.Item;
 
 @Mapper(componentModel = "spring")
-public interface BookingItemConverter {
+public interface BookingItemMapper {
 
     @Named("toItem")
     @Mapping(target = "id", source = "id")

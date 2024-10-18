@@ -6,7 +6,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingCreatingDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
-@Mapper(componentModel = "spring", uses = {BookingItemConverter.class, BookingUserConverter.class})
+@Mapper(componentModel = "spring", uses = {BookingItemMapper.class, BookingUserMapper.class})
 public interface BookingMapper {
 
     @Mapping(target = "bookingItem", source = "itemId", qualifiedByName = "toItem")

@@ -48,8 +48,8 @@ class BookingServiceImplTest {
     private final ItemServiceImpl itemService;
     private final BookingServiceImpl bookingService;
     // задаем параметры для теста, влияющие на наполнение БД данными
-    private final  int amountUser = 9;  // минимум 3 но не больше 80, четное 3, иначе тест не пройдет ввиду кол-ва дней в месяце
-    private final  int amountItem = 5;
+    private final int amountUser = 9;  // минимум 3 но не больше 80, четное 3, иначе тест не пройдет ввиду кол-ва дней в месяце
+    private final int amountItem = 5;
     private final long wait = 3;
     // запоминаем добавленных пользователей и айтемов
     private List<Long> userIds;

@@ -16,7 +16,6 @@ import lombok.ToString;
 @ToString
 public class CommentCreationDto {
 
-    //@NotNull(message = "Текст комментария не может быть null.")
     @NotBlank(message = "Текст комментария не может быть пустым.")
     private String text;
 
